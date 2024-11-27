@@ -1,0 +1,5 @@
+(sym_lib_table
+  (version 7)
+  (lib (name "hack_matrix.kicad_prl")(type "KiCad")(uri "${KIPRJMOD}/hack_matrix.kicad_prl.kicad_sym")(options "")(descr ""))
+  (lib (name "ESP32-S2-MINI-2")(type "KiCad")(uri "${KIPRJMOD}/ESP32-S2-MINI-2.kicad_sym")(options "")(descr ""))
+)

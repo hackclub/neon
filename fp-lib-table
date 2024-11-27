@@ -1,0 +1,9 @@
+(fp_lib_table
+  (version 7)
+  (lib (name "ESP32-S2-MINI-2")(type "KiCad")(uri "${KIPRJMOD}/ESP32-S2-MINI-2.pretty")(options "")(descr ""))
+  (lib (name "SN74AHCT245PWR")(type "KiCad")(uri "${KIPRJMOD}/SN74AHCT245PWR.pretty")(options "")(descr ""))
+  (lib (name "SOP65P640X120-20N")(type "KiCad")(uri "${KIPRJMOD}/SOP65P640X120-20N.pretty")(options "")(descr ""))
+  (lib (name "HRO_TYPE-C-31-M-12")(type "KiCad")(uri "${KIPRJMOD}/HRO_TYPE-C-31-M-12.pretty")(options "")(descr ""))
+  (lib (name "DORABO")(type "KiCad")(uri "${KIPRJMOD}/DORABO.pretty")(options "")(descr ""))
+  (lib (name "TS-1088-AR02016")(type "KiCad")(uri "${KIPRJMOD}/TS-1088-AR02016.pretty")(options "")(descr ""))
+)

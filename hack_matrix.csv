@@ -1,0 +1,13 @@
+"Id";"Designator";"Footprint";"Quantity";"Designation";"Supplier and ref";
+1;"U5,U1";"SOP65P640X120-20N";2;"SN74AHCT245PWR";;;
+2;"C5,C4";"C_0402_1005Metric";2;"10uF";;;
+3;"J1";"HRO_TYPE-C-31-M-12";1;"USB_C_Receptacle_USB2.0_16P";;;
+4;"C10";"C_0402_1005Metric";1;"1uF";;;
+5;"SW2";"SW_TS-1088-AR02016";1;"SW_Push";;;
+6;"U3";"SOT-23";1;"XC6206P332MR";;;
+7;"D1";"D_SOD-123F";1;"S-LMBR340FT1G";;;
+8;"U4";"XCVR_ESP32-S2-MINI-2";1;"ESP32-S2-MINI-2";;;
+9;"C3,C6";"C_0402_1005Metric";2;"0.1uF";;;
+10;"J2";"DB300V-5.0-2P-BU-S";1;"Screw_Terminal_01x02";;;
+11;"R2,R1";"R_0402_1005Metric";2;"5.1K";;;
+12;"U2";"PinSocket_2x08_P2.54mm_Vertical";1;"~";;;
