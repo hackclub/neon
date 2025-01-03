@@ -550,6 +550,17 @@
 						(type none)
 					)
 				)
+				(circle
+					(center 0 -5.842)
+					(radius 1.27)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type outline)
+					)
+				)
 				(polyline
 					(pts
 						(xy 0 -5.842) (xy 0 4.318)
@@ -560,17 +571,6 @@
 					)
 					(fill
 						(type none)
-					)
-				)
-				(circle
-					(center 0 -5.842)
-					(radius 1.27)
-					(stroke
-						(width 0)
-						(type default)
-					)
-					(fill
-						(type outline)
 					)
 				)
 				(rectangle
@@ -4965,10 +4965,6 @@
 		(uuid "63f3dc72-4c7e-40db-b4b4-e0b509193f15")
 	)
 	(no_connect
-		(at 134.62 92.71)
-		(uuid "699653fe-8de0-4fe7-b1d2-f92b0bc4dc2c")
-	)
-	(no_connect
 		(at 104.14 128.27)
 		(uuid "6a80ceea-6179-46fd-9394-dfe789dab6fa")
 	)
@@ -4983,10 +4979,6 @@
 	(no_connect
 		(at 50.8 95.25)
 		(uuid "780ae821-1420-42b5-9da3-72412c9f3184")
-	)
-	(no_connect
-		(at 134.62 90.17)
-		(uuid "7b26ed64-db3b-4b40-8810-60c8c940d098")
 	)
 	(no_connect
 		(at 134.62 95.25)
@@ -5031,10 +5023,6 @@
 	(no_connect
 		(at 134.62 118.11)
 		(uuid "ccf679c2-0e6c-432d-ac81-1068316fe7f9")
-	)
-	(no_connect
-		(at 104.14 82.55)
-		(uuid "f11fc94a-94dc-4927-bb09-40f6b20e9489")
 	)
 	(no_connect
 		(at 134.62 113.03)
@@ -6160,6 +6148,16 @@
 	)
 	(wire
 		(pts
+			(xy 104.14 78.74) (xy 104.14 82.55)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "f4dc86b5-35d3-4185-a9d1-1029980c76f6")
+	)
+	(wire
+		(pts
 			(xy 219.71 148.59) (xy 219.71 121.92)
 		)
 		(stroke
@@ -6208,6 +6206,17 @@
 			(justify right bottom)
 		)
 		(uuid "07c11aab-5cf2-4892-b38b-771a087cdbc0")
+	)
+	(label "D-"
+		(at 134.62 90.17 0)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left bottom)
+		)
+		(uuid "08f690ef-d985-4963-a25d-e57d12597628")
 	)
 	(label "G1"
 		(at 180.34 90.17 180)
@@ -6330,17 +6339,6 @@
 		)
 		(uuid "3557656e-ee31-4579-b8a4-a7b5c5ba49db")
 	)
-	(label "D+"
-		(at 99.06 123.19 0)
-		(fields_autoplaced yes)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left bottom)
-		)
-		(uuid "3cd5ac41-c2a1-4a70-857c-f2a88c1f3c82")
-	)
 	(label "D"
 		(at 99.06 110.49 180)
 		(fields_autoplaced yes)
@@ -6395,17 +6393,6 @@
 			(justify right bottom)
 		)
 		(uuid "653fa654-8d36-4b6b-9ed5-204bd7939836")
-	)
-	(label "D-"
-		(at 99.06 125.73 0)
-		(fields_autoplaced yes)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left bottom)
-		)
-		(uuid "66a4d3d0-315a-46be-a0a2-74266af1abfa")
 	)
 	(label "C"
 		(at 99.06 113.03 180)
@@ -6527,6 +6514,17 @@
 			(justify right bottom)
 		)
 		(uuid "efad2b7a-fb03-4afc-90aa-0838b59700b4")
+	)
+	(label "D+"
+		(at 134.62 92.71 0)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left bottom)
+		)
+		(uuid "f45c8fad-95ab-44b3-b799-029b2e6fe908")
 	)
 	(label "R2"
 		(at 180.34 97.79 180)
@@ -8594,6 +8592,72 @@
 			(project "hack_matrix"
 				(path "/f5b98ea7-14fe-45ed-a3b8-3726cfb4c1f2"
 					(reference "#PWR04")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "power:+3V3")
+		(at 104.14 78.74 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "6b8377bf-dc8a-47f7-af5c-3dbd092d554f")
+		(property "Reference" "#PWR012"
+			(at 104.14 82.55 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Value" "+3V3"
+			(at 104.14 73.66 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" ""
+			(at 104.14 78.74 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 104.14 78.74 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Power symbol creates a global label with name \"+3V3\""
+			(at 104.14 78.74 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "2e32e1fc-ae03-422e-9cb5-b061e8548eb1")
+		)
+		(instances
+			(project "hack_matrix"
+				(path "/f5b98ea7-14fe-45ed-a3b8-3726cfb4c1f2"
+					(reference "#PWR012")
 					(unit 1)
 				)
 			)
