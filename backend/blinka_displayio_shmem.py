@@ -1,6 +1,9 @@
+import time
+
 import displayio
 from PIL import Image
 from multiprocessing import shared_memory
+import atomics
 
 
 class ShmemDisplay():
@@ -12,11 +15,13 @@ class ShmemDisplay():
     rotation = 0
 
     _shmem = None
+    _lock = None
     framebuffer = None
 
     def __init__(self, name):
         self._shmem = shared_memory.SharedMemory(name=name, track=False)
-        self.framebuffer = self._shmem.buf[:8192]
+        self.framebuffer = self._shmem.buf[4:8192 + 4]
+        self._lock = self._shmem.buf[:4]
 
     def refresh(self):
         self._group_to_buffer()
@@ -29,7 +34,11 @@ class ShmemDisplay():
                 buffer
             )
 
-            self.framebuffer = buffer.tobytes()
+            with atomics.atomicview(self._lock, atomics.UINT) as a:
+                while not a.cmpxchg_weak(0, 1):
+                    time.sleep(1 / 1000)
+                self.framebuffer[:] = buffer.tobytes()
+                a.store(0)
 
             return self.framebuffer
 
