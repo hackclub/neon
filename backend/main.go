@@ -1,3 +1,6 @@
+//go:build linux
+// +build linux
+
 package main
 
 import (
@@ -7,7 +10,6 @@ import (
 	"net/http"
 	"os"
 	"os/exec"
-	"strings"
 	"sync/atomic"
 	"syscall"
 	"time"
@@ -18,6 +20,7 @@ import (
 
 func main() {
 	http.HandleFunc("/run", runProgram)
+	log.Println("8080")
 	log.Fatal(http.ListenAndServe("localhost:8080", nil))
 }
 
@@ -28,14 +31,24 @@ var upgrader = websocket.Upgrader{
 }
 
 func spawnProcess(code string, shmem string) (out chan []byte, in io.WriteCloser, kill func() error, err error) {
-	neonCmd := exec.Command("docker", "exec")
-
-	in, err = neonCmd.StdinPipe()
+	cwd, err := os.Getwd()
 	if err != nil {
 		return
 	}
 
-	neonOutPipe, err := neonCmd.StdoutPipe()
+	neonCmd := exec.Command(cwd+"/venv/bin/python3", "blinka_displayio_shmem.py")
+
+	//in, err = neonCmd.StdinPipe()
+	//if err != nil {
+	//	return
+	//}
+
+	/*	neonOutPipe, err := neonCmd.StdoutPipe()
+		if err != nil {
+			return
+		}*/
+
+	neonErrPipe, err := neonCmd.StderrPipe()
 	if err != nil {
 		return
 	}
@@ -43,59 +56,56 @@ func spawnProcess(code string, shmem string) (out chan []byte, in io.WriteCloser
 	out = make(chan []byte)
 
 	go func() {
-		outBuf := make([]byte, 1024)
+		outBuf := make([]byte, 1024*20)
 		for {
-			n, err := neonOutPipe.Read(outBuf)
+			/*			n, err := neonOutPipe.Read(outBuf)
+						fmt.Println(n)
+						if err != nil {
+							log.Println("read1:", err)
+							break
+						}
+
+						out <- outBuf[:n]*/
+
+			er, err := neonErrPipe.Read(outBuf)
+			fmt.Println(er)
 			if err != nil {
-				log.Println("read:", err)
+				log.Println("read1:", err)
 				break
 			}
-			out <- outBuf[:n]
+
+			out <- outBuf[:er]
 		}
+		out <- nil
 	}()
 
+	fmt.Println("about to start!")
 	neonCmd.Start()
-	kill = neonCmd.Process.Kill
+	kill = func() (err error) {
+		fmt.Println(neonCmd.Process.Pid)
+		err = neonCmd.Process.Kill()
+		neonCmd.Process.Wait()
+		return
+	}
 
 	return
 }
 
-type Color struct {
-	R, G, B, A uint8
-}
-
 type Shmem struct {
 	Lock   *uint32
-	Matrix []Color
+	Matrix []byte
 	file   *os.File
 }
 
-func (s *Shmem) Close() error {
-	return s.file.Close()
+func (s *Shmem) Unlink() error {
+	return os.Remove(s.file.Name())
 }
 
 const shmemSize = 4*32*64 + 4
 
 func createShmem(shmem string) (s Shmem, err error) {
-	if !strings.HasPrefix(shmem, "/") {
-		shmem = "/" + shmem
-	}
-
-	name, err := syscall.BytePtrFromString(shmem)
+	file, err := os.Create("/dev/shm/" + shmem)
 	if err != nil {
-		fmt.Println("ack")
-		return
-	}
-
-	flags := os.O_RDWR | os.O_CREATE
-	perms := 0600
-
-	fd, _, _ := syscall.Syscall(syscall.SYS_SHM_OPEN,
-		uintptr(unsafe.Pointer(name)),
-		uintptr(flags), uintptr(perms))
-
-	file := os.NewFile(fd, shmem)
-	if file == nil {
 		fmt.Println("ack2")
 		return
 	}
@@ -117,30 +127,29 @@ func createShmem(shmem string) (s Shmem, err error) {
 		return
 	}
 
-	s.Matrix = (*[shmemSize]Color)(unsafe.Pointer(&data[4]))[:]
+	s.Matrix = (*[shmemSize]byte)(unsafe.Pointer(&data[4]))[:]
 	s.Lock = (*uint32)(unsafe.Pointer(&data[0]))
 	s.file = file
 
 	return
 }
 
-func initMatrix(shmem string) (matrix chan *[]Color, quit chan struct{}, err error) {
-	matrix = make(chan *[]Color)
+func initMatrix(shmem string) (matrix chan *[]byte, quit chan struct{}, err error) {
+	matrix = make(chan *[]byte)
 	s, err := createShmem(shmem)
 	if err != nil {
 		fmt.Println(err)
 		return
 	}
-	defer s.Close()
 
-	ticker := time.NewTicker(1000 / 60 * time.Millisecond)
+	ticker := time.NewTicker(1000 / 30 * time.Millisecond)
 	quit = make(chan struct{})
 
 	go func() {
 		for {
 			select {
 			case <-ticker.C:
-				tempMatrix := make([]Color, 64*32)
+				tempMatrix := make([]byte, 64*32*4)
 
 				for !atomic.CompareAndSwapUint32(s.Lock, 0, 1) {
 					time.Sleep(time.Millisecond)
@@ -152,6 +161,7 @@ func initMatrix(shmem string) (matrix chan *[]Color, quit chan struct{}, err err
 
 			case <-quit:
 				ticker.Stop()
+				s.Unlink()
 				return
 			}
 		}
@@ -163,7 +173,7 @@ func initMatrix(shmem string) (matrix chan *[]Color, quit chan struct{}, err err
 func runProgram(w http.ResponseWriter, r *http.Request) {
 	code, err := io.ReadAll(r.Body)
 	if err != nil {
-		log.Println("read:", err)
+		log.Println("read2:", err)
 		return
 	}
 
@@ -180,14 +190,15 @@ func runProgram(w http.ResponseWriter, r *http.Request) {
 		for {
 			_, message, err := c.ReadMessage()
 			if err != nil {
-				log.Println("read:", err)
+				log.Println("read3:", err)
 				break
 			}
 			incomingMessages <- message
 		}
+		incomingMessages <- nil
 	}()
 
-	matrix, quit, err := initMatrix("nedfdsdfson")
+	matrix, quit, err := initMatrix("neon")
 	if err != nil {
 		log.Println("init:", err)
 		return
@@ -203,15 +214,28 @@ func runProgram(w http.ResponseWriter, r *http.Request) {
 	}
 	defer kill()
 
+	fmt.Println("------------ NEW --------------")
+	defer fmt.Println("------------ CLOSING CHANNEL! -------------")
+
 	for {
 		select {
 		case message := <-incomingMessages:
-			log.Println("received message:", string(message))
+			if message == nil {
+				return
+			}
+			fmt.Println(string(message))
 			in.Write(message)
 		case message := <-out:
+			if message == nil {
+				return
+			}
 			log.Println("received message:", string(message))
 		case matrix := <-matrix:
-			log.Println("received matrix:", matrix)
+			//log.Println("received matrix:", (*matrix)[0])
+			err := c.WriteMessage(websocket.BinaryMessage, *matrix)
+			if err != nil {
+				return
+			}
 		}
 	}
 }
