@@ -36,7 +36,7 @@ func spawnProcess(code string, shmem string) (out chan []byte, in io.WriteCloser
 		return
 	}
 
-	neonCmd := exec.Command(cwd+"/venv/bin/python3", "blinka_displayio_shmem.py")
+	neonCmd := exec.Command(cwd+"/venv/bin/python3", "-c", code)
 
 	//in, err = neonCmd.StdinPipe()
 	//if err != nil {
@@ -152,7 +152,7 @@ func initMatrix(shmem string) (matrix chan *[]byte, quit chan struct{}, err erro
 				tempMatrix := make([]byte, 64*32*4)
 
 				for !atomic.CompareAndSwapUint32(s.Lock, 0, 1) {
-					time.Sleep(time.Millisecond)
+					time.Sleep(time.Microsecond * 100)
 				}
 				copy(tempMatrix, s.Matrix)
 				atomic.StoreUint32(s.Lock, 0)
@@ -171,11 +171,7 @@ func initMatrix(shmem string) (matrix chan *[]byte, quit chan struct{}, err erro
 }
 
 func runProgram(w http.ResponseWriter, r *http.Request) {
-	code, err := io.ReadAll(r.Body)
-	if err != nil {
-		log.Println("read2:", err)
-		return
-	}
+	code := r.URL.Query().Get("code")
 
 	c, err := upgrader.Upgrade(w, r, nil)
 	if err != nil {
@@ -207,7 +203,7 @@ func runProgram(w http.ResponseWriter, r *http.Request) {
 		quit <- struct{}{}
 	}()
 
-	out, in, kill, err := spawnProcess(string(code), "neon") // TODO: shmem names
+	out, in, kill, err := spawnProcess(code, "neon") // TODO: shmem names
 	if err != nil {
 		log.Println("spawn:", err)
 		return

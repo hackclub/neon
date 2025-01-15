@@ -1,30 +1,26 @@
 import styles from "./editor.module.css"
 import Navbar from "./navbar.tsx";
 
-import {useEffect, useRef, useState} from "react";
+import {type RefObject, useEffect, useImperativeHandle, useRef, useState} from "react";
 import CodeMirror from "./codemirror.tsx";
+import {late} from "zod";
 
 type Color = [number, number, number];
 
-function Matrix() {
+function Matrix({codemirror, run, stop}: {codemirror: any, run: RefObject<any>, stop: RefObject<any>}) {
     const canvasRef = useRef<HTMLCanvasElement>(null);
-    const [ctx, setCtx] = useState<CanvasRenderingContext2D | null>(null);
     const [websocket, setWebsocket] = useState<WebSocket>();
 
-    useEffect(() => {
-        if (!canvasRef.current) return
+    useImperativeHandle(run, () => () => {
+        websocket?.close()
 
-        const ctx = canvasRef.current.getContext("2d");
-        setCtx(ctx);
-
-        const socket = new WebSocket("ws://localhost:8080/run");
+        const socket = new WebSocket("ws://localhost:8080/run?code=" + encodeURIComponent(codemirror.current.state.doc.toString()));
         setWebsocket(socket)
-
-        console.log("init")
 
         socket.onmessage = async (event) => {
             const arrayBuffer = await new Response(event.data).arrayBuffer()
             const arr = new Uint8Array(arrayBuffer)
+
             const matrix: Color[][] = Array.from({length: 32}, _ =>
                 Array.from({length: 64}, _ =>
                     [0,0,0] as Color))
@@ -35,13 +31,15 @@ function Matrix() {
 
             update(matrix)
         }
+    }, [websocket])
 
-        return () => socket.close()
-    }, [canvasRef.current]);
+    useImperativeHandle(stop, () => () => {
+        websocket?.close()
+    }, [websocket])
 
     function update(matrix: Color[][]) {
-        const canvas = canvasRef.current;
-        if (!canvas || !ctx) return;
+        const canvas = canvasRef.current!;
+        const ctx = canvas.getContext("2d")!;
 
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         for (let row = 0; row < canvas.height; row++) {
@@ -58,16 +56,21 @@ function Matrix() {
 }
 
 export default function Editor() {
-    const [code, setCode] = useState("this is a test")
+    const run = useRef<any>(null)
+    const stop = useRef<any>(null)
+
+    const editor = useRef<any>(null)
 
     return <div className={styles.parent}>
         <Navbar />
         <div className={styles.editor}>
             <div className={styles.codeMirror}>
-                <CodeMirror/>
+                <CodeMirror editorRef={editor} />
             </div>
             <div className={styles.output}>
-                <Matrix></Matrix>
+                <Matrix run={run} stop={stop} codemirror={editor}></Matrix>
+                <button onClick={() => run.current()}>run</button>
+                <button onClick={() => stop.current()}>stop</button>
             </div>
         </div>
     </div>
