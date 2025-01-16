@@ -1,9 +1,10 @@
 import mmap
+import threading
 import time
 import atomics
 import displayio
 
-class NeonDisplay():
+class FramebufferDisplay():
     root_group = None
     auto_refresh = False
     brightness = 1.0
@@ -15,17 +16,40 @@ class NeonDisplay():
     _lock = None
     framebuffer = None
 
-    def __init__(self):
+    _refresh_thread = None
+    _refresh_event = None
+
+    def __init__(self, matrix, auto_refresh=False):
         fd = open("/dev/shm/neon", mode='r+')
         self._mmap = memoryview(mmap.mmap(fd.fileno(), 0))
         self.framebuffer = self._mmap[4:8192 + 4]
         self._lock = self._mmap[:4]
+        self.auto_refresh = auto_refresh
 
     def __del__(self):
         del self.framebuffer
         del self._lock
 
-    def refresh(self):
+    @property
+    def auto_refresh(self):
+        return self._refresh_thread is not None
+
+    @auto_refresh.setter
+    def auto_refresh(self, value):
+        if value and self._refresh_thread is None:
+            self._refresh_thread = threading.Thread(target=self.run_auto_refresh)
+            self._refresh_event = threading.Event()
+            self._refresh_thread.start()
+        elif not value and self._refresh_thread is not None:
+            self._refresh_event.set()
+            self._refresh_thread = None
+
+    def run_auto_refresh(self):
+        while not self._refresh_event.is_set():
+            time.sleep(1/50)
+            self.refresh()
+
+    def refresh(self, minimum_frames_per_second=0):
         self._group_to_buffer()
 
     def _group_to_buffer(self):

@@ -38,7 +38,7 @@ func spawnProcess(code string, shmem string) (out chan string, in io.WriteCloser
 
 	neonCmd := exec.Command("docker", "run", "--name", shmem,
 		"--mount", "type=bind,src=/dev/shm/"+shmem+",dst=/dev/shm/neon",
-		"neon", "-u", "-c", "import displayio_wrapper; "+code)
+		"neon", "-u", "-c", "import neon_wrappers; "+code)
 
 	//in, err = neonCmd.StdinPipe()
 	//if err != nil {
