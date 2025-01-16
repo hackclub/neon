@@ -13,6 +13,8 @@
 .output {
     height: 100%;
     flex: 1;
+    display: flex;
+    flex-direction: column;
 }
 
 .parent {
@@ -24,4 +26,16 @@
 .matrix {
     width: 100%;
     image-rendering: pixelated;
+}
+
+.console {
+    overflow: scroll;
+}
+
+.buttons {
+    display: flex;
+}
+
+.button {
+    flex: 1;
 }

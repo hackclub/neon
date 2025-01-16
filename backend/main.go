@@ -4,6 +4,7 @@
 package main
 
 import (
+	"bufio"
 	"fmt"
 	"io"
 	"log"
@@ -33,59 +34,50 @@ var upgrader = websocket.Upgrader{
 	},
 }
 
-func spawnProcess(code string, shmem string) (out chan []byte, in io.WriteCloser, kill func() error, err error) {
+func spawnProcess(code string, shmem string) (out chan string, in io.WriteCloser, kill func() error, err error) {
 
-	neonCmd := exec.Command("docker", "run",
+	neonCmd := exec.Command("docker", "run", "--name", shmem,
 		"--mount", "type=bind,src=/dev/shm/"+shmem+",dst=/dev/shm/neon",
-		"neon", "-c", "import displayio_wrapper; "+code)
+		"neon", "-u", "-c", "import displayio_wrapper; "+code)
 
 	//in, err = neonCmd.StdinPipe()
 	//if err != nil {
 	//	return
 	//}
 
-	/*	neonOutPipe, err := neonCmd.StdoutPipe()
-		if err != nil {
-			return
-		}*/
-
-	neonErrPipe, err := neonCmd.StderrPipe()
+	neonOutPipe, err := neonCmd.StdoutPipe()
 	if err != nil {
 		return
 	}
 
-	out = make(chan []byte)
+	neonCmd.Stderr = neonCmd.Stdout
+
+	out = make(chan string)
+
+	neonCmd.Start()
 
 	go func() {
-		outBuf := make([]byte, 1024*20)
+		reader := bufio.NewReader(neonOutPipe)
 		for {
-			/*			n, err := neonOutPipe.Read(outBuf)
-						fmt.Println(n)
-						if err != nil {
-							log.Println("read1:", err)
-							break
-						}
-
-						out <- outBuf[:n]*/
-
-			er, err := neonErrPipe.Read(outBuf)
-			fmt.Println(er)
+			line, err := reader.ReadString('\n')
+			fmt.Print(line)
 			if err != nil {
-				log.Println("read1:", err)
+				fmt.Println(err)
+				fmt.Println(neonCmd.ProcessState)
 				break
 			}
 
-			out <- outBuf[:er]
+			out <- line
 		}
-		out <- nil
+		out <- ""
 	}()
 
 	fmt.Println("about to start!")
-	neonCmd.Start()
 	kill = func() (err error) {
 		fmt.Println(neonCmd.Process.Pid)
 		err = neonCmd.Process.Kill()
 		neonCmd.Process.Wait()
+		exec.Command("docker", "kill", shmem).Run()
 		return
 	}
 
@@ -233,10 +225,13 @@ func runProgram(w http.ResponseWriter, r *http.Request) {
 			fmt.Println(string(message))
 			in.Write(message)
 		case message := <-out:
-			if message == nil {
+			if message == "" {
 				return
 			}
-			log.Println("received message:", string(message))
+			err := c.WriteMessage(websocket.TextMessage, []byte(message))
+			if err != nil {
+				return
+			}
 		case matrix := <-matrix:
 			//log.Println("received matrix:", (*matrix)[0])
 			err := c.WriteMessage(websocket.BinaryMessage, *matrix)
