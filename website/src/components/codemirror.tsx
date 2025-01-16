@@ -23,24 +23,15 @@ import "./codemirror.css"
 
 import { python } from "@codemirror/lang-python";
 
-const default_text = `import array
-import mmap
-import os
-import sys
-import time
-import atomics
+const default_text = `import time
+import displayio
 import terminalio
 from rainbowio import colorwheel
 import adafruit_display_text.label
 
-old_stdout = sys.stdout
-sys.stdout = open(os.devnull, 'w')
-import displayio
-sys.stdout = old_stdout
+import neon_display
 
-import blinka_displayio_shmem
-
-display = blinka_displayio_shmem.ShmemDisplay("neon")
+display = neon_display.NeonDisplay()
 # Create a tilegrid with a bunch of common settings
 # Create two lines of text to scroll. Besides changing the text, you can also
 # customize the color and font (using Adafruit_CircuitPython_Bitmap_Font).
@@ -51,7 +42,7 @@ line1 = adafruit_display_text.label.Label(
     terminalio.FONT,
     color=0xff0000, 
     text="Hack Club!!!")
-line1.x = display.width
+line1.x = display.width - 20
 line1.y = 8
 
 line2 = adafruit_display_text.label.Label(

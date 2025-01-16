@@ -1,19 +1,9 @@
-import array
 import mmap
-import os
-import sys
 import time
 import atomics
-import terminalio
-from rainbowio import colorwheel
-import adafruit_display_text.label
-
-old_stdout = sys.stdout
-sys.stdout = open(os.devnull, 'w')
 import displayio
-sys.stdout = old_stdout
 
-class ShmemDisplay():
+class NeonDisplay():
     root_group = None
     auto_refresh = False
     brightness = 1.0
@@ -25,8 +15,8 @@ class ShmemDisplay():
     _lock = None
     framebuffer = None
 
-    def __init__(self, name):
-        fd = open("/dev/shm/" + name, mode='r+')
+    def __init__(self):
+        fd = open("/dev/shm/neon", mode='r+')
         self._mmap = memoryview(mmap.mmap(fd.fileno(), 0))
         self.framebuffer = self._mmap[4:8192 + 4]
         self._lock = self._mmap[:4]

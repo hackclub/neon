@@ -7,9 +7,12 @@ import (
 	"fmt"
 	"io"
 	"log"
+	"math/rand"
 	"net/http"
 	"os"
 	"os/exec"
+	"strconv"
+	"sync"
 	"sync/atomic"
 	"syscall"
 	"time"
@@ -31,12 +34,10 @@ var upgrader = websocket.Upgrader{
 }
 
 func spawnProcess(code string, shmem string) (out chan []byte, in io.WriteCloser, kill func() error, err error) {
-	cwd, err := os.Getwd()
-	if err != nil {
-		return
-	}
 
-	neonCmd := exec.Command(cwd+"/venv/bin/python3", "-c", code)
+	neonCmd := exec.Command("docker", "run",
+		"--mount", "type=bind,src=/dev/shm/"+shmem+",dst=/dev/shm/neon",
+		"neon", "-c", "import displayio_wrapper; "+code)
 
 	//in, err = neonCmd.StdinPipe()
 	//if err != nil {
@@ -170,6 +171,9 @@ func initMatrix(shmem string) (matrix chan *[]byte, quit chan struct{}, err erro
 	return
 }
 
+var shmemFiles = map[int]bool{}
+var shmemFilesLock = sync.Mutex{}
+
 func runProgram(w http.ResponseWriter, r *http.Request) {
 	code := r.URL.Query().Get("code")
 
@@ -194,7 +198,14 @@ func runProgram(w http.ResponseWriter, r *http.Request) {
 		incomingMessages <- nil
 	}()
 
-	matrix, quit, err := initMatrix("neon")
+	shmemFilesLock.Lock()
+	var i int
+	for i = rand.Int(); shmemFiles[i] == true; {
+	}
+	shmem := strconv.Itoa(i)
+	shmemFilesLock.Unlock()
+
+	matrix, quit, err := initMatrix(shmem)
 	if err != nil {
 		log.Println("init:", err)
 		return
@@ -203,7 +214,7 @@ func runProgram(w http.ResponseWriter, r *http.Request) {
 		quit <- struct{}{}
 	}()
 
-	out, in, kill, err := spawnProcess(code, "neon") // TODO: shmem names
+	out, in, kill, err := spawnProcess(code, shmem)
 	if err != nil {
 		log.Println("spawn:", err)
 		return
