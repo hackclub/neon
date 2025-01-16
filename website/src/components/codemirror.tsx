@@ -5,7 +5,7 @@ import {
     EditorView, highlightActiveLine,
     highlightActiveLineGutter,
     highlightSpecialChars, keymap,
-    lineNumbers, rectangularSelection
+    lineNumbers, rectangularSelection, ViewPlugin
 } from "@codemirror/view";
 import {EditorState} from "@codemirror/state";
 import {
@@ -118,16 +118,26 @@ export default function CodeMirror({editorRef}: {editorRef: RefObject<any>}) {
             ]),
             python(),
             syntaxHighlighting(defaultHighlightStyle, { fallback: true }),
+            ViewPlugin.fromClass(class {
+                update(update: any) {
+                    if (update.docChanged) onDocChange()
+                }
+            })
         ];
 
         let state = EditorState.create({
             extensions,
-            doc: default_text
+            doc: localStorage.getItem('text') ?? default_text
         })
 
         let editor = new EditorView({state, parent: parent.current ?? undefined});
 
         editorRef.current = editor
+
+        let onDocChange = () => {
+            console.log("hi")
+            localStorage.setItem('text', editor.state.doc.toString())
+        }
 
         return () => editor.destroy()
     }, []);

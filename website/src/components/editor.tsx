@@ -79,8 +79,15 @@ export default function Editor() {
                 <div className={styles.buttons}>
                     <button onClick={() => run()} className={styles.button}>run</button>
                     <button onClick={() => stop()} className={styles.button}>stop</button>
+                    <button onClick={() => {
+                        let element = document.createElement("a")
+                        element.setAttribute("href", "data:text/plain;charset=utf-8,"
+                            + encodeURIComponent(editor.current.state.doc.toString()));
+                        element.setAttribute('download', "code.py")
+                        element.click()
+                    }} className={styles.button}>download</button>
                 </div>
-                console:
+                console output:
                 <div className={styles.console} ref={consoleRef}>
                     {consoleLines.map(line => <p>{line}</p>)}
                 </div>
