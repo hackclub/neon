@@ -24,6 +24,9 @@ import (
 
 func main() {
 	http.HandleFunc("/run", runProgram)
+	http.HandleFunc("/", func(res http.ResponseWriter, req *http.Request) {
+		fmt.Fprint(res, "hello, world!")
+	})
 	log.Println("8080")
 
 	buildRunner()
