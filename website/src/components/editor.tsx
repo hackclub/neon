@@ -61,6 +61,7 @@ export default function Editor() {
         setWebsocket(socket)
 
         socket.onmessage = async (event) => {
+            console.log("recieved")
             if (typeof event.data === "string") {
                 setConsoleLines(lines => [...lines, event.data])
                 return
@@ -81,7 +82,10 @@ export default function Editor() {
         }
 
         socket.onopen = () => setRunning(true)
-        socket.onclose = () => setRunning(false)
+        socket.onclose = () => setWebsocket(websocket => {
+            if (websocket == socket) setRunning(false)
+            return websocket
+        })
     }
 
     function stop() {

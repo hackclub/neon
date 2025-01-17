@@ -20,6 +20,7 @@
     color: white;
     border: 2px solid white;
     padding: 10px;
-    top: 10px
+    top: 10px;
+    cursor: pointer;
 }
 
