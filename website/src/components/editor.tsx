@@ -14,16 +14,28 @@ function Matrix({update}: {update: RefObject<any>}) {
         const ctx = canvas.getContext("2d")!;
 
         ctx.clearRect(0, 0, canvas.width, canvas.height);
-        for (let row = 0; row < canvas.height; row++) {
-            for (let col = 0; col < canvas.width; col++) {
+        for (let row = 0; row < 32; row++) {
+            for (let col = 0; col < 64; col++) {
                 ctx.fillStyle = `rgb(${matrix[row][col].join(" ")})`
-                ctx.fillRect(col, row, 1, 1)
+                ctx.fillRect(col*5+1, row*5+1, 3, 3)
             }
+        }
+
+        const gridLinesColor = `rgb(27, 27, 27)`
+
+        for (let col = 0; col < 64; col++) {
+            ctx.fillStyle = gridLinesColor
+            ctx.fillRect(col*5+4, 0, 2, 32*5)
+        }
+
+        for (let row = 0; row < 32; row++) {
+            ctx.fillStyle = gridLinesColor
+            ctx.fillRect(0, row*5+4, 64*5, 2)
         }
 
     })
 
-    return <canvas width={64} height={32} ref={canvasRef} className={styles.matrix} />
+    return <canvas width={64*5} height={32*5} ref={canvasRef} className={styles.matrix} />
 }
 
 export default function Editor() {
@@ -57,7 +69,7 @@ export default function Editor() {
                     [0,0,0] as Color))
 
             for (let i = 0; i < 64*32; i++) {
-                matrix[Math.floor(i / 64)][i % 64] = [arr[i*4+1], arr[i*4+2], arr[i*4+3]]
+                matrix[Math.floor(i / 64)][i % 64] = [arr[i*4+2], arr[i*4+1], arr[i*4]]
             }
 
             update.current(matrix)

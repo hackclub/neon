@@ -26,6 +26,7 @@
 .matrix {
     width: 100%;
     image-rendering: pixelated;
+    background-color: black;
 }
 
 .console {
