@@ -39,7 +39,7 @@ export default function Editor() {
         websocket?.close()
         setConsoleLines([])
 
-        const socket = new WebSocket("ws://localhost:8080/run?code=" + encodeURIComponent(editor.current.state.doc.toString()));
+        const socket = new WebSocket("wss://dg84ks0sos0s48c00sg8kco0.a.selfhosted.hackclub.com/run?code=" + encodeURIComponent(editor.current.state.doc.toString()));
         setWebsocket(socket)
 
         socket.onmessage = async (event) => {
