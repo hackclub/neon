@@ -45,7 +45,13 @@ export default function Editor() {
     const consoleRef = useRef<any>(null)
 
     const [websocket, setWebsocket] = useState<WebSocket>();
-    const [consoleLines, setConsoleLines] = useState<string[]>([]);
+    const [consoleLines, setConsoleLines] = useState<string[]>(["nothing yet!"]);
+
+    const [running, setRunning] = useState(false);
+
+    useEffect(() => {
+        consoleRef.current.scrollTop = consoleRef.current.scrollHeight;
+    }, [consoleLines]);
 
     function run() {
         websocket?.close()
@@ -57,7 +63,6 @@ export default function Editor() {
         socket.onmessage = async (event) => {
             if (typeof event.data === "string") {
                 setConsoleLines(lines => [...lines, event.data])
-                consoleRef.current.scrollTop = consoleRef.current.scrollHeight;
                 return
             }
 
@@ -74,34 +79,42 @@ export default function Editor() {
 
             update.current(matrix)
         }
+
+        socket.onopen = () => setRunning(true)
+        socket.onclose = () => setRunning(false)
     }
 
     function stop() {
+        setRunning(false)
         websocket?.close()
     }
 
+    function downloadCode() {
+        let element = document.createElement("a")
+        element.setAttribute("href", "data:text/plain;charset=utf-8,"
+            + encodeURIComponent(editor.current.state.doc.toString()));
+        element.setAttribute('download', "code.py")
+        element.click()
+    }
+
     return <div className={styles.parent}>
-        <Navbar />
+        <Navbar downloadCode={downloadCode} />
         <div className={styles.editor}>
             <div className={styles.codeMirror}>
+                <div className={styles.runButton}
+                onClick={() => running ? stop() : run()}>
+                    {running ? "Stop" : "Run"}</div>
                 <CodeMirror editorRef={editor} />
             </div>
             <div className={styles.output}>
                 <Matrix update={update}></Matrix>
-                <div className={styles.buttons}>
-                    <button onClick={() => run()} className={styles.button}>run</button>
-                    <button onClick={() => stop()} className={styles.button}>stop</button>
-                    <button onClick={() => {
-                        let element = document.createElement("a")
-                        element.setAttribute("href", "data:text/plain;charset=utf-8,"
-                            + encodeURIComponent(editor.current.state.doc.toString()));
-                        element.setAttribute('download', "code.py")
-                        element.click()
-                    }} className={styles.button}>download</button>
-                </div>
-                console output:
-                <div className={styles.console} ref={consoleRef}>
-                    {consoleLines.map(line => <p>{line}</p>)}
+                <div className={styles.console}>
+                    <div className={styles.consoleHeader}>
+                        Console output:
+                    </div>
+                    <div className={styles.consoleOutput} ref={consoleRef}>
+                        {consoleLines.map(line => <p>{line}</p>)}
+                    </div>
                 </div>
             </div>
         </div>

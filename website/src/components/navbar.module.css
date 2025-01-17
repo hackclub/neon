@@ -2,7 +2,7 @@
 
 .navbar {
     display: flex;
-    background-color: #4C759D;
+    background-color: var(--accent);
     padding: 5px
 }
 
@@ -12,5 +12,14 @@
     font-weight: normal;
     font-size: 2.7rem;
     color: white;
+}
+
+.downloadButton {
+    position: absolute;
+    right: 20px;
+    color: white;
+    border: 2px solid white;
+    padding: 10px;
+    top: 10px
 }
 
