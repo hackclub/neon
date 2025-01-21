@@ -1,0 +1,83 @@
+---
+import Image from "astro/components/Image.astro"
+
+const {image, i: index} = Astro.props
+
+const offset = index * 280
+
+const calculateTransform = (offset: number) => {
+    const xDiv = 500
+    const coeff = 200
+
+    const offsetX = offset + "px"
+    const offsetY = -coeff * Math.atan(offset / xDiv) + "px"
+    const derivative = -2 * Math.pow(coeff, 2)
+        / (Math.pow(offset, 2) + Math.pow(xDiv, 2))
+    const angle = Math.atan(derivative) + "rad"
+
+    return { offsetX, offsetY, angle }
+}
+
+let {offsetX, offsetY, angle} = calculateTransform(offset)
+
+---
+
+<div class="polaroid">
+    <Image class="polaroidImage" src={image} alt="polaroid image" />
+    <div class="polaroidTextContainer">
+        <span class="polaroidText"><slot></slot></span>
+    </div>
+</div>
+
+<script>
+
+</script>
+
+<style define:vars={{offsetX, offsetY, angle}}>
+    .polaroid {
+        position: absolute;
+        aspect-ratio: 268/320;
+        width: 268px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        background-color: #484849;
+        border-radius: 5px;
+        filter: drop-shadow(0px 6px 6px rgba(0, 0, 0, 0.25));
+        margin-left: 10px;
+        margin-right: 10px;
+    }
+
+    .polaroid {
+        top: 50%;
+        left: 50%;
+        transform: translateX(calc(var(--offsetX) - 50%))
+        translateY(calc(var(--offsetY) - 50%))
+        rotate(var(--angle));
+    }
+
+    .polaroidImage {
+        width: 86%;
+        height: 72%;
+        object-fit: cover;
+        margin-top: 26px;
+    }
+
+    .polaroidTextContainer {
+        width: 86%;
+        height: 14%;
+        text-align: center;
+        margin-top: 10px;
+        margin-bottom: 0;
+        line-height: 44px;
+        container-name: polaroidTextContainer;
+    }
+
+    .polaroidText {
+        display: inline-block;
+        font-family: "Indie Flower", cursive;
+        font-size: 24px;
+        color: white;
+        line-height: 24px;
+    }
+</style>

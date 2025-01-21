@@ -1,0 +1,121 @@
+@import url('https://fonts.googleapis.com/css2?family=Indie+Flower&family=Jersey+25&display=swap');
+
+.titleContainerContainer {
+    width: 100%;
+    overflow-x: visible;
+    overflow-y: visible;
+    position: absolute;
+}
+
+.titleContainer {
+    width: 600px;
+    height: 300px;
+    position: absolute;
+    top: 100px;
+    left: calc(50% - 300px);
+    rotate: -10deg;
+    overflow-y: visible;
+    overflow-x: visible;
+}
+
+.titleMatrix {
+    background-color: rgba(44, 44, 44, 1);
+    color: white;
+    width: 100%;
+    height: 100%;
+    z-index: 100;
+    position: absolute;
+    box-shadow: rgba(32, 32, 32, 1) -10px 10px 0;
+}
+
+.titleMatrix > h1 {
+    font-family: "Jersey 25", serif;
+    font-size:15em;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    margin: 0;
+}
+
+.wiresLeft {
+    position: absolute;
+    left: -400px;
+    bottom: 250px;
+    scale: 2.3;
+
+}
+
+.wiresRight {
+    position: absolute;
+    right: -300px;
+    bottom: 200px;
+    scale: 2.3;
+}
+
+.wiresSwitch {
+    position: absolute;
+    right: -250px;
+    top: 20px;
+    rotate: -10deg;
+}
+
+main {
+    background:
+    radial-gradient(circle at left center,
+        rgba(220, 123, 123, 0.3),
+        rgba(225, 124, 124, 0.15) 20%,
+        rgba(0, 0, 0, 0) 40%),
+    radial-gradient(circle at right 10%,
+            rgba(0, 21, 255, 0.5),
+            rgba(124, 132, 225, 0.2) 20%,
+            rgba(0, 0, 0, 0) 40%),
+    rgba(23, 23, 23, 1);
+    width: 100%;
+    min-height: 100%;
+
+}
+
+body {
+    overflow-x: hidden;
+}
+
+.titleSwitch {
+    position: absolute;
+    bottom: -300px;
+    right: -350px;
+}
+
+.flag {
+    position: absolute;
+    left: -170px;
+    scale: 0.4;
+    top: -80px
+}
+
+.bodyContainer {
+    color: white;
+    padding-top: 500px;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    z-index: 1;
+}
+
+.body {
+    max-width: 800px;
+}
+
+h1 {
+    text-align: center;
+    font-size: 2.2em;
+}
+
+.polaroids {
+    position: relative;
+    width: 100%;
+    overflow-x: hidden;
+    overflow-y: hidden;
+    height: 800px
+}

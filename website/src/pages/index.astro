@@ -1,0 +1,62 @@
+---
+import Layout from "../layouts/Layout.astro";
+import "./index.css"
+import Image from "astro/components/Image.astro";
+
+import wiresLeft from "../assets/title_wires_left.svg"
+import wiresRight from "../assets/title_wires_right.svg"
+import wiresSwitch from "../assets/title_wires_switch.svg"
+import titleSwitch from "../assets/title_switch.svg"
+import hcFlag from "../assets/flag-standalone.png"
+
+import faqExample from "../assets/faq-example.png"
+
+import rgbledPicture from "../assets/rgbled_picture.png"
+import Polaroid from "../components/polaroid.astro";
+import FAQStickyNote from "../components/faq_sticky_note.astro";
+---
+
+<Layout>
+    <main>
+    <div class="titleContainerContainer">
+    <div class="titleContainer">
+        <div class="titleMatrix">
+            <Image class="flag" src={hcFlag} alt="hack club flag" />
+            <h1>NEON</h1>
+        </div>
+        <Image class="wiresLeft" src={wiresLeft} alt="wires left"/>
+        <Image class="wiresRight" src={wiresRight} alt="wires right"/>
+        <Image class="wiresSwitch" src={wiresSwitch} alt="wires switch"/>
+        <Image class="titleSwitch" src={titleSwitch} alt="title switch"/>
+        <rect x="74.9763" y="51.1414" width="39" height="47" transform="rotate(2.73114 74.9763 51.1414)" fill="#898989"/>y
+    </div>
+    </div>
+        <div class="bodyContainer">
+            <div class="body">
+                <h1>RGB LED matricies are the super-bright pixel displays used on Times Square.
+
+                    <br><br>Write some firmware for a dashboard or display, and we'll send you one to run it on!</h1>
+            </div>
+
+            <div class="polaroids">
+                <Polaroid image={rgbledPicture} i="-3">matricies at times square!</Polaroid>
+                <Polaroid image={rgbledPicture} i="-2">mbta, boston!</Polaroid>
+                <Polaroid image={rgbledPicture} i="-1">reciepts leaderboard at hq!</Polaroid>
+                <Polaroid image={rgbledPicture} i="0">gus' bus tracker!</Polaroid>
+                <Polaroid image={rgbledPicture} i="1">spotify tracker on my desk</Polaroid>
+                <Polaroid image={rgbledPicture} i="2">conway's game of life!</Polaroid>
+                <Polaroid image={rgbledPicture} i="3">exhibit at british museum!</Polaroid>
+            </div>
+
+            <div class="faq">
+                <FAQStickyNote q="Lorem Ipsum">This is some FAQ text, this is some FAQ text, this is some FAQ text</FAQStickyNote>
+                <FAQStickyNote q="Lorem Ipsum">This is some FAQ text, this is some FAQ text, this is some FAQ text</FAQStickyNote>
+                <FAQStickyNote q="Lorem Ipsum">This is some FAQ text, this is some FAQ text, this is some FAQ text</FAQStickyNote>
+                <FAQStickyNote q="Lorem Ipsum">This is some FAQ text, this is some FAQ text, this is some FAQ text</FAQStickyNote>
+
+            </div>
+
+            <br><br><br><br>
+        </div>
+    </main>
+</Layout>
