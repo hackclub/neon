@@ -3,16 +3,43 @@
 let {q: question, title} = Astro.props
 if (!title) title = false
 
+// random hash algo from stack overflow
+const cyrb53 = (str, seed = 0) => {
+    let h1 = 0xdeadbeef ^ seed, h2 = 0x41c6ce57 ^ seed;
+    for(let i = 0, ch; i < str.length; i++) {
+        ch = str.charCodeAt(i);
+        h1 = Math.imul(h1 ^ ch, 2654435761);
+        h2 = Math.imul(h2 ^ ch, 1597334677);
+    }
+    h1  = Math.imul(h1 ^ (h1 >>> 16), 2246822507);
+    h1 ^= Math.imul(h2 ^ (h2 >>> 13), 3266489909);
+    h2  = Math.imul(h2 ^ (h2 >>> 16), 2246822507);
+    h2 ^= Math.imul(h1 ^ (h1 >>> 13), 3266489909);
+
+    return 4294967296 * (2097151 & h2) + (h1 >>> 0);
+};
+
+const hash = cyrb53(question ?? "")
+
+let rotation = (hash % 10 + 5)
+if (hash % 2 == 0) rotation = -rotation
+rotation = rotation + "deg"
+
+let hue = hash % 1000
+if (title) hue = 52
 ---
 
-<div class="note">
+<div class={`note ${title ? "title" : ""}`}>
+    <div class="titleInner">
+        FAQ
+    </div>
     <h1>{question}</h1>
     <p><slot></slot></p>
 </div>
 
-<style>
+<style define:vars={{rotation, hue}}>
     .note {
-        background-color: rgba(218, 198, 70, 1);
+        background-color: hsl(var(--hue), 70%, 65%);
         width: 300px;
         height: 300px;
 
@@ -25,7 +52,7 @@ if (!title) title = false
 
         filter: drop-shadow(0px 6px 6px rgba(0, 0, 0, 0.25));
 
-
+        rotate: var(--rotation);
     }
 
     h1 {
@@ -34,5 +61,28 @@ if (!title) title = false
 
     p {
         font-size: 1.5em;
+    }
+
+    .title {
+        position: absolute;
+        top: -350px;
+        right: 250px;
+        rotate: 10deg;
+        z-index: 999;
+    }
+
+    .titleInner {
+        display: none;
+    }
+
+    .title .titleInner {
+        font-size: 8em;
+        width: 100%;
+        height: 100%;
+        font-family: "Rubik Doodle Shadow", serif;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0;
     }
 </style>

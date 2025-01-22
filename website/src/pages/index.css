@@ -133,7 +133,7 @@ h1 {
 
 .polaroidsLabel {
     position: absolute;
-    left: 200px;
+    left: 10%;
     top: 200px;
     font-family: "Indie Flower", serif;
     font-size: 3em;
@@ -198,4 +198,18 @@ h1 {
     width: 300px;
     height: 200px;
     background-color: green;
+}
+
+.faq {
+    display: flex;
+    position: relative;
+    margin-top: 170px;
+    flex-wrap: wrap;
+    width: 70%;
+    margin-left: 20%;
+    justify-content: space-evenly;
+}
+
+.faq > * {
+    margin: -20px -20px;
 }
