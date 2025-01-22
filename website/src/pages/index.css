@@ -213,3 +213,11 @@ h1 {
 .faq > * {
     margin: -20px -20px;
 }
+
+.getStarted {
+    height: 100px;
+}
+
+.footer {
+    height: 100px
+}
