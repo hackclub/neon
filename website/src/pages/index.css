@@ -2,7 +2,6 @@
     width: 100%;
     overflow-x: visible;
     overflow-y: visible;
-    position: absolute;
 }
 
 .titleContainer {
@@ -78,6 +77,11 @@ body {
     overflow-x: hidden;
 }
 
+.body hr {
+    border-color: #8a8c9a;
+    width: 75%
+}
+
 .titleSwitch {
     position: absolute;
     bottom: -300px;
@@ -102,7 +106,17 @@ body {
 }
 
 .body {
-    max-width: 800px;
+    padding-bottom: 0;
+    position: relative;
+    padding-top: 15px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.bodyTextContainer {
+    max-width: 730px;
+    margin-bottom: 50px;
 }
 
 h1 {
@@ -115,5 +129,73 @@ h1 {
     width: 100%;
     overflow-x: hidden;
     overflow-y: hidden;
-    height: 800px
+    height: 800px;
+}
+
+.polaroidsLabel {
+    position: absolute;
+    left: 200px;
+    top: 200px;
+    font-family: "Indie Flower", serif;
+    font-size: 3em;
+    rotate: -10deg;
+}
+
+.instructions {
+    display: flex;
+    width: 100%;
+    position: relative;
+}
+
+.step {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 350px;
+    margin: 0 50px;
+    padding: 20px;
+    filter: drop-shadow(0px 6px 6px rgba(0, 0, 0, 0.25));
+    rotate: 2deg;
+    font-family: "Jersey 25", serif;
+    height: fit-content;
+}
+
+.step1 {
+    /*
+    transform: translateY(150px);
+    */
+}
+
+.step2 {
+
+}
+
+.step > img {
+    width: 100%;
+    height: 300px;
+    object-fit: cover;
+    border-radius: 2%;
+    margin: 20px 0;
+}
+
+.step > .label {
+    font-size: 2em
+}
+
+.arrow {
+    margin-top: 200px;
+    transform: scaleY(-1);
+    rotate: 0deg
+}
+
+.prelabel {
+    text-align: left;
+    width: 100%;
+    font-size: 1.6em;
+}
+
+.signup {
+    width: 300px;
+    height: 200px;
+    background-color: green;
 }

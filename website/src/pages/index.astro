@@ -3,17 +3,27 @@ import Layout from "../layouts/Layout.astro";
 import "./index.css"
 import Image from "astro/components/Image.astro";
 
-import wiresLeft from "../assets/title_wires_left.svg"
-import wiresRight from "../assets/title_wires_right.svg"
-import wiresSwitch from "../assets/title_wires_switch.svg"
-import titleSwitch from "../assets/title_switch.svg"
-import hcFlag from "../assets/flag-standalone.png"
+import wiresLeft from "../assets/title/title_wires_left.svg"
+import wiresRight from "../assets/title/title_wires_right.svg"
+import wiresSwitch from "../assets/title/title_wires_switch.svg"
+import titleSwitch from "../assets/title/title_switch.svg"
+import hcFlag from "../assets/title/flag-standalone.png"
 
-import faqExample from "../assets/faq-example.png"
 
-import rgbledPicture from "../assets/rgbled_picture.png"
+import rgbledPicture from "../assets/polaroids/rgbled_picture.png"
+import timesSquare from "../assets/polaroids/times_square.png"
+import mbta from "../assets/polaroids/mbta.png"
+import protogen from "../assets/polaroids/protogen.png"
+import busTracker from "../assets/polaroids/busTracker.png"
+import spotify from "../assets/polaroids/spotify.png"
+import conways from "../assets/polaroids/conways.png"
+import british from "../assets/polaroids/british.png"
+
 import Polaroid from "../components/polaroid.astro";
-import FAQStickyNote from "../components/faq_sticky_note.astro";
+import FAQStickyNote from "../components/sticky_note.astro";
+
+import arrow from "../assets/arrow.svg"
+import editor from "../assets/editor.jpeg"
 ---
 
 <Layout>
@@ -33,19 +43,44 @@ import FAQStickyNote from "../components/faq_sticky_note.astro";
     </div>
         <div class="bodyContainer">
             <div class="body">
-                <h1>RGB LED matricies are the super-bright pixel displays used on Times Square.
+                <div class="bodyTextContainer">
+                    <h1>RGB LED matricies are the super-bright pixel displays used on Times Square...
 
-                    <br><br>Write some firmware for a dashboard or display, and we'll send you one to run it on!</h1>
+                        <hr>Write code for one, and we'll send it to you!</h1>
+
+                </div>
+
+
+                <div class="instructions">
+
+                    <div class="step step1">
+                        <div class="prelabel">When you ship...</div>
+                        <Image src={editor} alt=""></Image>
+                    </div>
+                    <Image src={arrow} alt="arrow" class="arrow"></Image>
+                    <div class="step step2">
+                        <div class="prelabel">We'll ship...</div>
+
+                        <Image src={rgbledPicture} alt=""></Image>
+                    </div>
+                </div>
+
+
             </div>
 
+
+
             <div class="polaroids">
-                <Polaroid image={rgbledPicture} i="-3">matricies at times square!</Polaroid>
-                <Polaroid image={rgbledPicture} i="-2">mbta, boston!</Polaroid>
-                <Polaroid image={rgbledPicture} i="-1">reciepts leaderboard at hq!</Polaroid>
-                <Polaroid image={rgbledPicture} i="0">gus' bus tracker!</Polaroid>
-                <Polaroid image={rgbledPicture} i="1">spotify tracker on my desk</Polaroid>
-                <Polaroid image={rgbledPicture} i="2">conway's game of life!</Polaroid>
-                <Polaroid image={rgbledPicture} i="3">exhibit at british museum!</Polaroid>
+                <div class="polaroidsLabel">
+                    you could build...
+                </div>
+                <Polaroid image={timesSquare} i="-3">matricies at times square!</Polaroid>
+                <Polaroid image={mbta} i="-2">mbta, boston!</Polaroid>
+                <Polaroid image={protogen} i="-1">max's protogen head!</Polaroid>
+                <Polaroid image={busTracker} i="0">gus' bus tracker!</Polaroid>
+                <Polaroid image={spotify} i="1">spotify tracker on my desk</Polaroid>
+                <Polaroid image={conways} i="2">conway's game of life!</Polaroid>
+                <Polaroid image={british} i="3">exhibit at british museum!</Polaroid>
             </div>
 
             <div class="faq">
@@ -53,7 +88,6 @@ import FAQStickyNote from "../components/faq_sticky_note.astro";
                 <FAQStickyNote q="Lorem Ipsum">This is some FAQ text, this is some FAQ text, this is some FAQ text</FAQStickyNote>
                 <FAQStickyNote q="Lorem Ipsum">This is some FAQ text, this is some FAQ text, this is some FAQ text</FAQStickyNote>
                 <FAQStickyNote q="Lorem Ipsum">This is some FAQ text, this is some FAQ text, this is some FAQ text</FAQStickyNote>
-
             </div>
 
             <br><br><br><br>
