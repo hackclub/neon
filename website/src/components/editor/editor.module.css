@@ -50,6 +50,7 @@
 }
 
 .consoleOutput {
+    font-family: monospace;
     overflow-y: scroll;
     flex: 1;
     padding: 10px
