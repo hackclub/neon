@@ -8,6 +8,7 @@ adafruit-circuitpython-requests==4.1.8
 adafruit-circuitpython-ticks==1.1.1
 adafruit-circuitpython-typing==1.11.2
 adafruit_circuitpython_minimqtt==7.11.4
+adafruit-circuitpython-hashlib==1.4.17
 Adafruit-PlatformDetect==3.76.1
 Adafruit-PureIO==1.1.11
 atomics==1.0.3
