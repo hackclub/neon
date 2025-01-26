@@ -107,7 +107,7 @@ export default function Editor() {
         const websocketUrl = import.meta.env.PROD ? "wss://dg84ks0sos0s48c00sg8kco0.a.selfhosted.hackclub.com" : "ws://localhost:8080"
 
         const socket = new WebSocket(websocketUrl + "/run?wahoo=true"
-            + files.map(file => "&filename=" + encodeURIComponent(file.name)).join()
+            + files.map(file => "&filename=" + encodeURIComponent(file.name)).join('')
     );
         setWebsocket(socket)
 
