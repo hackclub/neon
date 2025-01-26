@@ -3,6 +3,7 @@ import Navbar from "./navbar.tsx";
 
 import {type RefObject, useEffect, useImperativeHandle, useRef, useState} from "react";
 import CodeMirror from "./codemirror.tsx";
+import JSZip from "jszip";
 
 type Color = [number, number, number];
 
@@ -38,6 +39,11 @@ function Matrix({update}: {update: RefObject<any>}) {
     return <canvas width={64*5} height={32*5} ref={canvasRef} className={styles.matrix} />
 }
 
+type NeonFile = {
+    name: string,
+    content: ArrayBuffer,
+}
+
 export default function Editor() {
     const update = useRef<any>(null)
     const editor = useRef<any>(null)
@@ -49,15 +55,60 @@ export default function Editor() {
 
     const [running, setRunning] = useState(false);
 
+    const [files, setFiles] = useState<NeonFile[]>([])
+
+    const [db, setDb] = useState<IDBDatabase>()
+
     useEffect(() => {
         consoleRef.current.scrollTop = consoleRef.current.scrollHeight;
     }, [consoleLines]);
+
+    useEffect(() => {
+        const openRequest = window.indexedDB.open("files_db", 1)
+
+        openRequest.onsuccess = () => {
+            let db = openRequest.result;
+            setDb(db)
+
+            db.transaction("files_os").objectStore("files_os").openCursor().onsuccess = (e) => {
+                const cursor = (e.target! as any).result as IDBCursorWithValue
+
+                if (cursor) {
+                    console.log(cursor)
+
+                    setFiles(files => [...files, {
+                        name: cursor.value.name,
+                        content: cursor.value.content
+                    }])
+
+                    cursor.continue()
+                }
+
+            }
+        }
+
+        openRequest.onupgradeneeded = () => {
+            let db = openRequest.result;
+
+            const objectStore = db.createObjectStore("files_os", {
+                keyPath: "name",
+            })
+
+            objectStore.createIndex("name", "name", {unique: false})
+            objectStore.createIndex("content", "content", {unique: false})
+        }
+
+    }, []);
 
     function run() {
         websocket?.close()
         setConsoleLines([])
 
-        const socket = new WebSocket("wss://dg84ks0sos0s48c00sg8kco0.a.selfhosted.hackclub.com/run?code=" + encodeURIComponent(editor.current.state.doc.toString()));
+        const websocketUrl = import.meta.env.PROD ? "wss://dg84ks0sos0s48c00sg8kco0.a.selfhosted.hackclub.com" : "ws://localhost:8080"
+
+        const socket = new WebSocket(websocketUrl + "/run?wahoo=true"
+            + files.map(file => "&filename=" + encodeURIComponent(file.name)).join()
+    );
         setWebsocket(socket)
 
         socket.onmessage = async (event) => {
@@ -81,7 +132,13 @@ export default function Editor() {
             update.current(matrix)
         }
 
-        socket.onopen = () => setRunning(true)
+        socket.onopen = () => {
+            socket.send(editor.current.state.doc.toString())
+            for (let file of files) {
+                socket.send(file.content)
+            }
+            setRunning(true)
+        }
         socket.onclose = () => setWebsocket(websocket => {
             if (websocket == socket) setRunning(false)
             return websocket
@@ -94,12 +151,35 @@ export default function Editor() {
     }
 
     function downloadCode() {
-        let element = document.createElement("a")
-        element.setAttribute("href", "data:text/plain;charset=utf-8,"
-            + encodeURIComponent(editor.current.state.doc.toString()));
-        element.setAttribute('download', "code.py")
-        element.click()
+        if (files.length == 0) {
+            let element = document.createElement("a")
+            element.setAttribute("href", "data:text/plain;charset=utf-8,"
+                + encodeURIComponent(editor.current.state.doc.toString()));            element.setAttribute('download', "code.zip")
+            element.setAttribute('download', "code.py")
+            element.click()
+        }
+
+        const zip = new JSZip()
+        zip.file("code.py", editor.current.state.doc.toString())
+
+        for (let file of files) {
+            zip.file(file.name, file.content)
+        }
+
+        zip.generateAsync({type: "blob"}).then(content => {
+            const reader = new FileReader()
+            reader.onloadend = () => {
+                console.log("aaa")
+                let element = document.createElement("a")
+                element.setAttribute("href", reader.result as string)
+                element.setAttribute('download', "code.zip")
+                element.click()
+            }
+            reader.readAsDataURL(content)
+        })
+
     }
+
 
     return <div className={styles.parent}>
         <Navbar downloadCode={downloadCode} />
@@ -119,6 +199,54 @@ export default function Editor() {
                     <div className={styles.consoleOutput} ref={consoleRef}>
                         {consoleLines.map(line => <p>{line}</p>)}
                     </div>
+                </div>
+                <div className={styles.files}>
+                    <div className={styles.filesHeader}>
+                        <div>Files:</div>
+                        <button className={styles.fileInput}
+                                onClick={() => {
+                                    const fileInput = document.createElement("input")
+                                    fileInput.type = "file"
+
+                                    fileInput.onchange = async () => {
+                                        const blob = new Blob();
+
+                                        const reader = new FileReader()
+                                        reader.readAsArrayBuffer(blob)
+                                        const newFile = {
+                                            name: fileInput.files![0].name,
+                                            content: await fileInput.files![0].arrayBuffer()
+                                        }
+
+                                        setFiles([...files, newFile])
+
+                                        db!.transaction("files_os", "readwrite").objectStore("files_os").add(newFile).onsuccess = (e) => {
+                                            fileInput.remove()
+                                        }
+
+                                    }
+
+                                    fileInput.click()
+
+
+                            }
+                        }>Upload file</button>
+                    </div>
+                    <div className={styles.filesContent}>
+                        {files.map((file, i) => <>
+                            <div className={styles.fileEntry} key={file.name + i}
+                                 style={{backgroundColor: i % 2 ? "#c7d9ec" : "#9ac0e4"}}
+                            ><div>{file.name}</div>
+                                <button className={styles.fileButton}
+                                        onClick={() => {
+                                            setFiles(files.toSpliced(i, 1))
+                                            db!.transaction("files_os", "readwrite").objectStore("files_os").delete(file.name)
+                                        }}>X</button>
+                            </div>
+
+                        </>)}
+                    </div>
+
                 </div>
             </div>
         </div>

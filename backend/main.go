@@ -50,11 +50,20 @@ var upgrader = websocket.Upgrader{
 	},
 }
 
-func spawnProcess(code string, shmem string) (out chan string, in io.WriteCloser, kill func() error, err error) {
-
-	neonCmd := exec.Command("docker", "run", "--name", shmem,
+func createContainer(code string, shmem string) {
+	cmd := exec.Command("docker", "create", "--name", shmem,
 		"--mount", "type=bind,src=/dev/shm/neon/"+shmem+",dst=/dev/shm/neon",
 		"neon", "-u", "-c", "import neon_wrappers; "+code)
+
+	cmd.Stderr = os.Stderr
+	cmd.Stdout = os.Stdout
+
+	cmd.Run()
+}
+
+func spawnProcess(shmem string) (out chan string, in io.WriteCloser, kill func() error, err error) {
+
+	neonCmd := exec.Command("docker", "start", "-ai", shmem)
 
 	//in, err = neonCmd.StdinPipe()
 	//if err != nil {
@@ -179,11 +188,31 @@ func initMatrix(shmem string) (matrix chan *[]byte, quit chan struct{}, err erro
 	return
 }
 
+func loadFile(filename string, data []byte, containerName string) {
+	f, err := os.CreateTemp("", "neon")
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	defer f.Close()
+	defer os.Remove(f.Name())
+
+	f.Write(data)
+
+	cmd := exec.Command("docker", "cp", f.Name(), containerName+":/root/"+filename)
+
+	cmd.Stderr = os.Stderr
+	cmd.Stdout = os.Stdout
+
+	cmd.Run()
+}
+
 var shmemFiles = map[int]bool{}
 var shmemFilesLock = sync.Mutex{}
 
 func runProgram(w http.ResponseWriter, r *http.Request) {
-	code := r.URL.Query().Get("code")
+	fileNames := r.URL.Query()["filename"]
+	fmt.Println(fileNames)
 
 	c, err := upgrader.Upgrade(w, r, nil)
 	if err != nil {
@@ -222,7 +251,17 @@ func runProgram(w http.ResponseWriter, r *http.Request) {
 		quit <- struct{}{}
 	}()
 
-	out, in, kill, err := spawnProcess(code, shmem)
+	code := string(<-incomingMessages)
+
+	createContainer(code, shmem)
+
+	for i := range fileNames {
+		msg := <-incomingMessages
+
+		loadFile(fileNames[i], msg, shmem)
+	}
+
+	out, in, kill, err := spawnProcess(shmem)
 	if err != nil {
 		log.Println("spawn:", err)
 		return

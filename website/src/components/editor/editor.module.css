@@ -34,19 +34,64 @@
     margin-bottom: 20px;
 }
 
-.console {
-    flex: 1;
+.console, .files {
     border: 3px solid var(--accent);
     display: flex;
     flex-direction: column;
     overflow: hidden;
 }
 
-.consoleHeader {
+.consoleHeader, .filesHeader {
     background-color: var(--accent);
     color: white;
     padding: 5px 10px 10px 10px;
     font-size: 1.2em;
+}
+
+.console {
+    flex: 1
+}
+
+.files {
+    margin-top: 20px;
+    height: 200px;
+}
+
+.filesContent {
+    overflow-y: scroll;
+}
+
+.filesHeader {
+    display: flex;
+    flex-direction: row;
+    position: relative;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.fileInput {
+    color: white;
+    border: 2px solid white;
+    padding: 5px;
+    cursor: pointer;
+    background-color: #FFFFFF00;
+}
+
+.fileEntry {
+    display: flex;
+    padding: 7px;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.fileButton {
+    width: 30px;
+    height: 30px;
+    background-color: var(--accent);
+    color: white;
+    border: none;
+    margin: 5px;
+    flex-shrink: 0;
 }
 
 .consoleOutput {
@@ -55,6 +100,7 @@
     flex: 1;
     padding: 10px
 }
+
 
 .button {
     flex: 1;

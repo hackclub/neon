@@ -17,6 +17,7 @@
     "@uiw/react-codemirror": "^4.23.7",
     "astro": "^5.1.2",
     "codemirror": "^6.0.1",
+    "jszip": "^3.10.1",
     "react": "^19.0.0",
     "react-dom": "^19.0.0"
   },
