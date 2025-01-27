@@ -1,0 +1,23 @@
+services:
+  web:
+    build: .
+    ports:
+      - "8080:8080"
+    privileged: true
+    user: root
+    volumes:
+      - type: bind
+        source: /var/run/docker.sock
+        target: /var/run/docker.sock
+      - type: bind
+        source: /dev/shm/neon
+        target: /dev/shm/neon
+        bind:
+          create_host_path: true
+    entrypoint: >
+      /bin/sh -c "
+        mkdir -p /dev/shm/neon &&
+        chmod -R 777 /dev/shm/neon &&
+        chown -R root:root /dev/shm/neon &&
+        /root/neon-backend
+      " 
