@@ -1,0 +1,1 @@
+uhh for backend to build for rust, just set RUN_LANGUAGE=rust as an env variable, and the same for go.

@@ -25,4 +25,4 @@ class Board:
     def __getattr__(self, item):
         return True
 
-sys.modules['board'] = Board()
+sys.modules['board'] = Board() 

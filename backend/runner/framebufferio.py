@@ -60,7 +60,6 @@ class FramebufferDisplay():
                 displayio._structs.ColorspaceStruct(32),
                 displayio._area.Area(0, 0, self.width, self.height),
                 [0 for _ in range(32*64 // 32)],
-
                 buffer
             )
 
@@ -70,4 +69,4 @@ class FramebufferDisplay():
                 self.framebuffer[:] = buffer.tobytes()
                 a.store(0)
 
-            return self.framebuffer
+            return self.framebuffer 

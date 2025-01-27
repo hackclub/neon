@@ -1,8 +1,14 @@
 services:
   web:
-    build: .
-    expose:
-      - 8080
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        - LANGUAGE=${RUN_LANGUAGE:-rust}
+    ports:
+      - "8080:8080"
+    privileged: true
+    user: root
     volumes:
       - type: bind
         source: /var/run/docker.sock
@@ -10,3 +16,14 @@ services:
       - type: bind
         source: /dev/shm/neon
         target: /dev/shm/neon
+        bind:
+          create_host_path: true
+    environment:
+      - RUN_LANGUAGE=${RUN_LANGUAGE:-rust}
+    entrypoint: >
+      /bin/sh -c "
+        mkdir -p /dev/shm/neon &&
+        chmod -R 777 /dev/shm/neon &&
+        chown -R root:root /dev/shm/neon &&
+        if [ \"$RUN_LANGUAGE\" = \"go\" ]; then ./neon; else ./neon-backend; fi
+      "
