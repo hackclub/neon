@@ -23,13 +23,14 @@ import (
 )
 
 func main() {
+	startDocker()
+	buildRunner()
+
 	http.HandleFunc("/run", runProgram)
 	http.HandleFunc("/", func(res http.ResponseWriter, req *http.Request) {
 		fmt.Fprint(res, "hello, world!")
 	})
 	log.Println("8080")
-
-	buildRunner()
 
 	log.Fatal(http.ListenAndServe("0.0.0.0:8080", nil))
 }
@@ -44,6 +45,15 @@ func buildRunner() {
 	}
 }
 
+func startDocker() {
+	cmd := exec.Command("dockerd")
+	cmd.Start()
+
+	for exec.Command("docker", "info").Run() != nil {
+		time.Sleep(time.Millisecond * 500)
+	}
+}
+
 var upgrader = websocket.Upgrader{
 	CheckOrigin: func(r *http.Request) bool {
 		return true
@@ -52,7 +62,7 @@ var upgrader = websocket.Upgrader{
 
 func createContainer(code string, shmem string) {
 	cmd := exec.Command("docker", "create", "--name", shmem,
-		"--mount", "type=bind,src=/dev/shm/neon/"+shmem+",dst=/dev/shm/neon",
+		"--mount", "type=bind,src=/dev/shm/"+shmem+",dst=/dev/shm/neon",
 		"neon", "-u", "-c", "import neon_wrappers; "+code)
 
 	cmd.Stderr = os.Stderr
@@ -122,7 +132,7 @@ func (s *Shmem) Unlink() error {
 const shmemSize = 4*32*64 + 4
 
 func createShmem(shmem string) (s Shmem, err error) {
-	file, err := os.Create("/dev/shm/neon/" + shmem)
+	file, err := os.Create("/dev/shm/" + shmem)
 	if err != nil {
 		fmt.Println("ack2")
 		return

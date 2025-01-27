@@ -1,6 +1,6 @@
-FROM alpine:latest
+FROM docker:dind
 
-RUN apk add go docker-cli
+RUN apk add go
 
 WORKDIR /root
 
