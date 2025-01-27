@@ -4,7 +4,7 @@ services:
       context: .
       dockerfile: Dockerfile
       args:
-        - LANGUAGE=${RUN_LANGUAGE}
+        - LANGUAGE=${RUN_LANGUAGE:-rust}
     ports:
       - "8080:8080"
     privileged: true
@@ -19,7 +19,7 @@ services:
         bind:
           create_host_path: true
     environment:
-      - RUN_LANGUAGE=${RUN_LANGUAGE}
+      - RUN_LANGUAGE=${RUN_LANGUAGE:-rust}
     entrypoint: >
       /bin/sh -c "
         mkdir -p /dev/shm/neon &&
