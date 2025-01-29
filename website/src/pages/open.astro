@@ -29,46 +29,51 @@ delete files[""]
 <script define:vars={{files}}>
     console.log(files)
 
-            const openRequest = window.indexedDB.open("files_db", 1)
-            localStorage.setItem("text", "")
+    if (confirm("Are you sure you want to open this repo? All saved files will be deleted.")) {
+        const openRequest = window.indexedDB.open("files_db", 1)
+        localStorage.setItem("text", "")
 
-            const loadFiles = (db) => {
-                db.transaction("files_os", "readwrite").objectStore("files_os").clear().onsuccess = () => {
-                    const addFile = (name, file) => {
-                        return new Promise((resolve, reject) => {
-                            if (name === "code.py" || name === "main.py") {
-                                localStorage.setItem("text", new TextDecoder().decode(new Uint8Array(file)))
-                                resolve()
-                            } else {
-                                db.transaction("files_os", "readwrite").objectStore("files_os").add({
-                                    name, content: file.buffer
-                                }).onsuccess = resolve
-                            }
-                        })
-                    }
-
-                    Promise.all(Object.keys(files).map(key => addFile(key, files[key]))).then(() => {
-                        window.location.replace("/editor")
+        const loadFiles = (db) => {
+            db.transaction("files_os", "readwrite").objectStore("files_os").clear().onsuccess = () => {
+                const addFile = (name, file) => {
+                    return new Promise((resolve, reject) => {
+                        if (name === "code.py" || name === "main.py") {
+                            localStorage.setItem("text", new TextDecoder().decode(new Uint8Array(file)))
+                            resolve()
+                        } else {
+                            db.transaction("files_os", "readwrite").objectStore("files_os").add({
+                                name, content: file.buffer
+                            }).onsuccess = resolve
+                        }
                     })
                 }
-            }
 
-            openRequest.onsuccess = () => {
-                let db = openRequest.result;
-
-                loadFiles(db)
-            }
-
-            openRequest.onupgradeneeded = () => {
-                let db = openRequest.result;
-
-                const objectStore = db.createObjectStore("files_os", {
-                    keyPath: "name",
+                Promise.all(Object.keys(files).map(key => addFile(key, files[key]))).then(() => {
+                    window.location.replace("/editor")
                 })
-
-                objectStore.createIndex("name", "name", {unique: false})
-                objectStore.createIndex("content", "content", {unique: false})
-
-                loadFiles(db)
             }
+        }
+
+        openRequest.onsuccess = () => {
+            let db = openRequest.result;
+
+            loadFiles(db)
+        }
+
+        openRequest.onupgradeneeded = () => {
+            let db = openRequest.result;
+
+            const objectStore = db.createObjectStore("files_os", {
+                keyPath: "name",
+            })
+
+            objectStore.createIndex("name", "name", {unique: false})
+            objectStore.createIndex("content", "content", {unique: false})
+
+            loadFiles(db)
+        }
+    } else {
+        window.location.replace("/editor")
+    }
+
 </script>
