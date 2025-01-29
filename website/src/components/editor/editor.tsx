@@ -64,6 +64,12 @@ export default function Editor() {
     }, [consoleLines]);
 
     useEffect(() => {
+        window.onbeforeunload = e => {
+            e.preventDefault()
+        }
+    }, []);
+
+    useEffect(() => {
         const openRequest = window.indexedDB.open("files_db", 1)
 
         openRequest.onsuccess = () => {
@@ -209,10 +215,6 @@ export default function Editor() {
                                     fileInput.type = "file"
 
                                     fileInput.onchange = async () => {
-                                        const blob = new Blob();
-
-                                        const reader = new FileReader()
-                                        reader.readAsArrayBuffer(blob)
                                         const newFile = {
                                             name: fileInput.files![0].name,
                                             content: await fileInput.files![0].arrayBuffer()
