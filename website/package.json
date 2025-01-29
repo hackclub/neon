@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@astrojs/react": "^4.1.2",
+    "@astrojs/vercel": "^8.0.4",
     "@codemirror/lang-javascript": "^6.2.2",
     "@codemirror/lang-python": "^6.1.6",
     "@types/react": "^19.0.2",
