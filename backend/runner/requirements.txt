@@ -10,6 +10,7 @@ adafruit-circuitpython-typing==1.11.2
 adafruit_circuitpython_minimqtt==7.11.4
 adafruit-circuitpython-hashlib==1.4.17
 adafruit-circuitpython-display_shapes==2.10.1
+adafruit-circuitpython-imageload==1.23.8
 Adafruit-PlatformDetect==3.76.1
 Adafruit-PureIO==1.1.11
 atomics==1.0.3
