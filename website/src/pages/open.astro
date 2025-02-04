@@ -7,7 +7,11 @@ const author = Astro.url.searchParams.get("author")
 const repo = Astro.url.searchParams.get("repo")
 const branch = Astro.url.searchParams.get("branch") ?? "main"
 
-if (!author || !branch) return Astro.redirect("/editor")
+if (!author || !branch) {
+    return new Response("Not Found", {
+        status: 404
+    })
+}
 
 const zip = await fetch(`https://github.com/${author}/${repo}/archive/refs/heads/${branch}.zip`)
 
@@ -22,6 +26,11 @@ for (let file in filesObj) {
     files[file.substring(file.indexOf("/")+1)] = [...await filesObj[file].async("uint8array")]
 }
 
+if (files["code.py"] === undefined && files["main.py"] === undefined) {
+    return new Response("Not Found", {
+        status: 404
+    })
+}
 
 delete files[""]
 ---

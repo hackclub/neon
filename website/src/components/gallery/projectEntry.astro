@@ -1,0 +1,48 @@
+---
+import "./gallery.css"
+
+const {name, githubLink, description, screenshot, video, index} = Astro.props
+
+// random hash algo from stack overflow
+const cyrb53 = (str: string, seed = 0) => {
+    let h1 = 0xdeadbeef ^ seed, h2 = 0x41c6ce57 ^ seed;
+    for(let i = 0, ch; i < str.length; i++) {
+        ch = str.charCodeAt(i);
+        h1 = Math.imul(h1 ^ ch, 2654435761);
+        h2 = Math.imul(h2 ^ ch, 1597334677);
+    }
+    h1  = Math.imul(h1 ^ (h1 >>> 16), 2246822507);
+    h1 ^= Math.imul(h2 ^ (h2 >>> 13), 3266489909);
+    h2  = Math.imul(h2 ^ (h2 >>> 16), 2246822507);
+    h2 ^= Math.imul(h1 ^ (h1 >>> 13), 3266489909);
+
+    return 4294967296 * (2097151 & h2) + (h1 >>> 0);
+};
+
+const hash = cyrb53(name ?? "")
+
+let rotation: number | string = (hash % 4 + 1)
+rotation -= 2.5
+rotation = rotation + "deg"
+
+let runLink;
+if (typeof Astro.props.runLink === "string" && (await fetch(Astro.props.runLink)).ok) {
+    runLink = Astro.props.runLink;
+}
+---
+
+<div class="projectEntry">
+    <div class="image" style={`rotate: ${rotation}`}>
+        {screenshot ? <img src={screenshot} class="screenshot" />
+            : <video src={video} class="screenshot" controls />}
+    </div>
+    <div class="links">
+        <a href={githubLink}>Open Code</a>
+        {runLink && <>
+            &nbsp;|&nbsp;
+            <a href={runLink}>Open in Editor</a>
+        </>}
+    </div>
+    <div class="description">{description}
+    </div>
+</div>

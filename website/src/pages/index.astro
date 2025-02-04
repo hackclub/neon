@@ -1,14 +1,7 @@
 ---
 import Layout from "../layouts/Layout.astro";
-import "./index.css"
+import "../components/home/index.css"
 import Image from "astro/components/Image.astro";
-
-import wiresLeft from "../assets/title/title_wires_left.svg"
-import wiresRight from "../assets/title/title_wires_right.svg"
-import wiresSwitch from "../assets/title/title_wires_switch.svg"
-import titleSwitch from "../assets/title/title_switch.svg"
-import hcFlag from "../assets/title/flag-standalone.png"
-
 
 import rgbledPicture from "../assets/polaroids/rgbled_picture.png"
 import timesSquare from "../assets/polaroids/times_square.png"
@@ -19,28 +12,17 @@ import spotify from "../assets/polaroids/spotify.png"
 import conways from "../assets/polaroids/conways.png"
 import british from "../assets/polaroids/british.png"
 
-import Polaroid from "../components/polaroid.astro";
-import FAQStickyNote from "../components/sticky_note.astro";
+import Polaroid from "../components/home/polaroid.astro";
+import FAQStickyNote from "../components/home/sticky_note.astro";
 
 import arrow from "../assets/arrow.svg"
 import editor from "../assets/editor.jpeg"
+import Title from "../components/home/title.astro";
 ---
 
 <Layout>
     <main>
-    <div class="titleContainerContainer">
-    <div class="titleContainer">
-        <div class="titleMatrix">
-            <Image class="flag" src={hcFlag} alt="hack club flag" />
-            <h1>NEON</h1>
-        </div>
-        <Image class="wiresLeft" src={wiresLeft} alt="wires left"/>
-        <Image class="wiresRight" src={wiresRight} alt="wires right"/>
-        <Image class="wiresSwitch" src={wiresSwitch} alt="wires switch"/>
-        <Image class="titleSwitch" src={titleSwitch} alt="title switch"/>
-        <rect x="74.9763" y="51.1414" width="39" height="47" transform="rotate(2.73114 74.9763 51.1414)" fill="#898989"/>y
-    </div>
-    </div>
+        <Title />
         <div class="bodyContainer">
             <div class="body">
                 <div class="bodyTextContainer">

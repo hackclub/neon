@@ -1,0 +1,58 @@
+---
+import ProjectEntry from "../components/gallery/projectEntry.astro";
+export const prerender = false
+
+import "../components/home/index.css"
+
+Astro.response.headers.set("Cache-Control", "public, max-age=60, s-maxage=3600")
+
+import Layout from "../layouts/Layout.astro";
+
+import Airtable from "airtable";
+import Title from "../components/home/title.astro";
+
+Airtable.configure(
+    {apiKey: import.meta.env.AIRTABLE_API_KEY })
+
+const base = Airtable.base("appFd7yXKO1NNG6cj")
+
+const records = (await new Promise((resolve) => base("YSWS Project Submission").select({
+    maxRecords: 100, // guessing not more thn 100 records in the gallery? lol
+    view: "Gallery"
+}).firstPage((_error, records) => {
+    resolve(records);
+})) as any).map((record: any) => {
+    console.log(record.fields["Screenshot"])
+    const image = record.fields["Screenshot"][0].type.includes("image");
+
+    return {
+        username: record.fields["GitHub Username"],
+        githubLink: record.fields["Code URL"],
+        description: record.fields["Description"],
+        screenshot: image ? record.fields["Screenshot"][0].url : undefined,
+        video: image ? undefined : record.fields["Screenshot"][0].url,
+        runLink: record.fields["Playable URL"],
+    }
+})
+
+console.log(records)
+---
+
+<Layout>
+    <Title gallery/>
+    <main>
+        <div class="projects">
+            {records.map((item: any, index: number) => {
+                return <ProjectEntry
+                        index={index}
+                        name={item.username}
+                        description={item.description}
+                        githubLink={item.githubLink}
+                        screenshot={item.screenshot}
+                        video={item.video}
+                        runLink={item.runLink}
+                />
+            })}
+        </div>
+    </main>
+</Layout>
