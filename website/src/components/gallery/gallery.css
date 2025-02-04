@@ -36,9 +36,13 @@
 .links {
     margin-top: 30px;
     color: white;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    width: 100%;
 }
 
-.links > a {
+.links * a {
     color: white;
 }
 

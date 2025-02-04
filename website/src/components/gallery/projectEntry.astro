@@ -1,7 +1,7 @@
 ---
 import "./gallery.css"
 
-const {name, githubLink, description, screenshot, video, index} = Astro.props
+let {name, githubLink, description, screenshot, video, index} = Astro.props
 
 // random hash algo from stack overflow
 const cyrb53 = (str: string, seed = 0) => {
@@ -29,6 +29,11 @@ let runLink;
 if (typeof Astro.props.runLink === "string" && (await fetch(Astro.props.runLink)).ok) {
     runLink = Astro.props.runLink;
 }
+
+let githubProfileLink = name === undefined ? "" : name.includes("gitlab.com") ?
+    `https://gitlab.com/${name.split("gitlab.com")[1]}` :`https://github.com/${name}`
+name = name === undefined ? undefined : name.includes("gitlab.com") ?
+    name.split("gitlab.com")[1] : name
 ---
 
 <div class="projectEntry">
@@ -37,11 +42,14 @@ if (typeof Astro.props.runLink === "string" && (await fetch(Astro.props.runLink)
             : <video src={video} class="screenshot" controls />}
     </div>
     <div class="links">
+        {githubProfileLink && <div>By <a href={githubProfileLink}>{name}</a></div>}
+        <div>
         <a href={githubLink}>Open Code</a>
         {runLink && <>
             &nbsp;|&nbsp;
             <a href={runLink}>Open in Editor</a>
         </>}
+        </div>
     </div>
     <div class="description">{description}
     </div>
