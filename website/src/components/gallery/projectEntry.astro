@@ -31,9 +31,9 @@ if (typeof Astro.props.runLink === "string" && (await fetch(Astro.props.runLink)
 }
 
 let githubProfileLink = name === undefined ? "" : name.includes("gitlab.com") ?
-    `https://gitlab.com/${name.split("gitlab.com")[1]}` :`https://github.com/${name}`
+    `https://gitlab.com/${name.split("gitlab.com/")[1]}` :`https://github.com/${name}`
 name = name === undefined ? undefined : name.includes("gitlab.com") ?
-    name.split("gitlab.com")[1] : name
+    name.split("gitlab.com/")[1] : name
 ---
 
 <div class="projectEntry">
