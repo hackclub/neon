@@ -41,6 +41,9 @@ console.log(records)
 <Layout>
     <Title gallery/>
     <main>
+        <div class="body">
+            <h1>Check out the {records.length} projects Hack Clubbers have built for Neon!</h1>
+        </div>
         <div class="projects">
             {records.map((item: any, index: number) => {
                 return <ProjectEntry

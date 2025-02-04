@@ -69,7 +69,10 @@
 }
 
 main {
-    padding-top: 600px;
+    padding-top: 500px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
 .projects {
@@ -77,4 +80,15 @@ main {
     flex-wrap: wrap;
     padding: 50px;
     justify-content: space-evenly;
+    margin: 0 40px;
+}
+
+.body {
+    color: white;
+    max-width: 950px;
+}
+
+h1 {
+    text-align: center;
+    font-size: 2.2em;
 }
