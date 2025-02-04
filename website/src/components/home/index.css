@@ -95,6 +95,29 @@ body {
     top: -80px
 }
 
+.galleryText {
+    font-family: "Jersey 25", serif;
+    font-size: 5em;
+
+    position: absolute;
+    right: 10px;
+    bottom: -100px;
+
+
+    background-color: rgba(44, 44, 44, 1);
+    padding: 10px;
+
+    width: 370px;
+    text-align: center;
+
+}
+
+.shadow {
+    box-shadow: rgba(32, 32, 32, 1) -10px 10px 0;
+    height: 100px;
+    z-index: -1;
+}
+
 .bodyContainer {
     color: white;
     padding-top: 500px;

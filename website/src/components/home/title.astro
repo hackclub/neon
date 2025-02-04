@@ -1,0 +1,27 @@
+---
+import Image from "astro/components/Image.astro"
+
+import wiresLeft from "../../assets/title/title_wires_left.svg"
+import wiresRight from "../../assets/title/title_wires_right.svg"
+import wiresSwitch from "../../assets/title/title_wires_switch.svg"
+import titleSwitch from "../../assets/title/title_switch.svg"
+import hcFlag from "../../assets/title/flag-standalone.png"
+
+const {gallery} = Astro.props
+---
+
+<div class="titleContainerContainer">
+    <div class="titleContainer">
+        <div class="titleMatrix">
+            <Image class="flag" src={hcFlag} alt="hack club flag" />
+            <h1>NEON</h1>
+            {gallery && <h2 class="galleryText">the gallery</h2>}
+        </div>
+        {gallery && <h2 class="galleryText shadow"></h2>}
+        <Image class="wiresLeft" src={wiresLeft} alt="wires left"/>
+        <Image class="wiresRight" src={wiresRight} alt="wires right"/>
+        <Image class="wiresSwitch" src={wiresSwitch} alt="wires switch"/>
+        <Image class="titleSwitch" src={titleSwitch} alt="title switch"/>
+        <rect x="74.9763" y="51.1414" width="39" height="47" transform="rotate(2.73114 74.9763 51.1414)" fill="#898989"/>y
+    </div>
+</div>
